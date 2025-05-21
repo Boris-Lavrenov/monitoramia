@@ -213,6 +213,7 @@ export default {
 }
 
 .vertical-text {
+
 	background-color: inherit !important;
 	transform: rotate(-180deg);
 	writing-mode: vertical-rl;
