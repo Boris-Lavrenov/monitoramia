@@ -30,7 +30,7 @@ export default {
 			this.isFP = url === 'fp' ? true : false
 			this.myJson = this.myJson[url]
 			this.myHead = this.myJson.head
-			this.myBody = this.myJson.body
+			this.myBody = this.myJson.body.educational_institution
 		},
 		nullOrValue(value) {
 			return value ? value : ''
@@ -125,76 +125,66 @@ export default {
 					</tr>
 				</thead>
 				<tbody>
-					<template
-						v-for="(obj1, key1) in myBody"
-						:key="key1">
-						<tr>
-							<!--Учреждение-->
-							<td :colspan="getCountHeadFirst + 3">
-								<h3>
-									<strong> {{ key1 }}</strong>
-								</h3>
-							</td>
-						</tr>
+					<tr>
+						<!--Учреждение-->
+						<td :colspan="getCountHeadFirst + 3">
+							<h3>
+								<strong>
+									{{ myBody.educational_institution_title }}
+								</strong>
+							</h3>
+						</td>
+					</tr>
+					<template v-for="facultiy in myBody.faculties">
 						<tr v-if="isFP">
 							<td :colspan="getCountHeadFirst + 3">
 								<h3>
-									<strong> Факультет права</strong>
+									<strong class="tdHead"> Факультет права</strong>
 								</h3>
 							</td>
 						</tr>
-						<!--Факульеты-->
-						<template
-							v-for="(obj2, key2) in obj1"
-							:key="key2">
-							<tr>
-								<td :colspan="getCountHeadFirst + 3">
-									<h4>
-										<strong class="tdHead"
-											>{{ key2 }}
-										</strong>
-									</h4>
+						<tr>
+							<td :colspan="getCountHeadFirst + 3">
+								<h4>
+									<strong class="tdHead">{{ facultiy.faculty_name }}</strong>
+								</h4>
+							</td>
+						</tr>
+						<template v-for="special in facultiy.specialties">
+							<tr
+								class="trClass"
+								v-for="(person, person_key, index) in special.specialty_data">
+								<td
+									:rowspan="countPerson(special)"
+									v-if="index === 0">
+									<h4>{{ special.specialty_name }}</h4>
+								</td>
+								<td style="vertical-align: middle">
+									<strong>{{ isEmpty(person_key) }}</strong>
+								</td>
+								<td
+									style="vertical-align: middle"
+									class="fw-bold">
+									<h4>{{ person['План приема'] }}</h4>
+								</td>
+								<td style="vertical-align: middle">
+									<h5>{{ person['Всего'] }}</h5>
+								</td>
+								<td style="vertical-align: middle">
+									<h5>{{ person['Без экзаменов'] }}</h5>
+								</td>
+								<td style="vertical-align: middle">
+									<h5>{{ person['Вне конкурса'] }}</h5>
+								</td>
+								<td style="vertical-align: middle">
+									<h4>{{ person['По конкурсу'] }}</h4>
+								</td>
+								<td
+									style="vertical-align: middle"
+									v-for="point in points">
+									{{ person['scores'][point] }}
 								</td>
 							</tr>
-							<!--Специальности-->
-
-							<template v-for="(row, row_key) in obj2">
-								<tr
-									class="trClass"
-									v-for="(cols, col_key, index) in row">
-									<td
-										style="vertical-align: middle"
-										v-if="index === 0"
-										:rowspan="countPerson(row)">
-										<h4>{{ row_key }}</h4>
-									</td>
-									<td style="vertical-align: middle">
-										<strong>{{ isEmpty(col_key) }}</strong>
-									</td>
-									<td
-										style="vertical-align: middle"
-										class="fw-bold">
-										<h4>{{ cols['План приема'] }}</h4>
-									</td>
-									<td style="vertical-align: middle">
-										<h5>{{ cols['Всего'] }}</h5>
-									</td>
-									<td style="vertical-align: middle">
-										<h5>{{ cols['Без экзаменов'] }}</h5>
-									</td>
-									<td style="vertical-align: middle">
-										<h5>{{ cols['Вне конкурса'] }}</h5>
-									</td>
-									<td style="vertical-align: middle">
-										<h4>{{ cols['По конкурсу'] }}</h4>
-									</td>
-									<td
-										style="vertical-align: middle"
-										v-for="point in points">
-										{{ cols['scores'][point] }}
-									</td>
-								</tr>
-							</template>
 						</template>
 					</template>
 				</tbody>
@@ -213,11 +203,11 @@ export default {
 }
 
 .vertical-text {
-
 	background-color: inherit !important;
 	transform: rotate(-180deg);
 	writing-mode: vertical-rl;
 }
+
 table {
 	overflow: hidden;
 }
@@ -230,6 +220,7 @@ table {
 th {
 	position: relative;
 }
+
 .trClass > td:hover::after,
 th:hover::after {
 	content: '';
@@ -241,6 +232,7 @@ th:hover::after {
 	width: 100%;
 	z-index: -1;
 }
+
 td {
 	padding: 5px;
 }
