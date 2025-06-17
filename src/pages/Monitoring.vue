@@ -135,14 +135,14 @@ export default {
 							</h3>
 						</td>
 					</tr>
+					<tr v-if="isFP">
+						<td :colspan="getCountHeadFirst + 3">
+							<h3>
+								<strong class="tdHead"> Факультет права</strong>
+							</h3>
+						</td>
+					</tr>
 					<template v-for="facultiy in myBody.faculties">
-						<tr v-if="isFP">
-							<td :colspan="getCountHeadFirst + 3">
-								<h3>
-									<strong class="tdHead"> Факультет права</strong>
-								</h3>
-							</td>
-						</tr>
 						<tr>
 							<td :colspan="getCountHeadFirst + 3">
 								<h4>
@@ -155,7 +155,7 @@ export default {
 								class="trClass"
 								v-for="(person, person_key, index) in special.specialty_data">
 								<td
-									:rowspan="countPerson(special)"
+									:rowspan="countPerson(special.specialty_data)"
 									v-if="index === 0">
 									<h4>{{ special.specialty_name }}</h4>
 								</td>
