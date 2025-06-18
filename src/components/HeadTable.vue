@@ -14,6 +14,10 @@ export default {
 			type: Object,
 			default: () => {},
 		},
+		isFp: {
+			type: Boolean,
+			default: false,
+		},
 	},
 }
 </script>
@@ -25,9 +29,7 @@ export default {
 		</h2>
 		<div class="head__text mt-5">
 			<div>
-				<h2 v-if="head.education_form">
-					Форма получения образования {{ head.education_form }}
-				</h2>
+				<h2 v-if="!isFp">Форма получения образования {{ head.education_form }}</h2>
 				<h2>Прием осуществляется {{ head.education_term }}</h2>
 				<h2>Прием осуществляется {{ head.budget }}</h2>
 			</div>

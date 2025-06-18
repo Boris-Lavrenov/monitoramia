@@ -1,2 +1,11 @@
 // Import all of Bootstrap’s CSS
 @import "bootstrap/scss/bootstrap";
+.myBg{
+  background-color: $green-200;
+}
+.myColorRed-700{
+  color: $red-700
+}
+.myColorRed{
+  color: $danger
+}

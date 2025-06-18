@@ -72,7 +72,8 @@ export default {
 			<HeadTable
 				:time="time"
 				:date="date"
-				:head="myHead" />
+				:head="myHead"
+				:is-fp="isFP" />
 			<table class="table-bordered text-center">
 				<thead style="cursor: default; vertical-align: middle">
 					<tr>
@@ -108,9 +109,7 @@ export default {
 							Всего
 						</td>
 						<td colspan="3">в том числе</td>
-						<td :colspan="getCountHeadSecond">
-							с суммой набранных баллов для конкурсного зачисления
-						</td>
+						<td :colspan="getCountHeadSecond">с суммой набранных баллов для конкурсного зачисления</td>
 					</tr>
 					<tr>
 						<td class="vertical-text">без экзаменов</td>
@@ -189,6 +188,7 @@ export default {
 					</template>
 				</tbody>
 			</table>
+			<text></text>
 		</div>
 	</div>
 </template>
