@@ -3,6 +3,10 @@
 .myBg{
   background-color: $green-200;
 }
+.myBgTable{
+  --bs-table-color: #f1f1f1;
+  --bs-table-bg: #4e6128;
+}
 .myColorRed-700{
   color: $red-700
 }

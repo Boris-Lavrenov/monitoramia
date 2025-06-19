@@ -12,6 +12,7 @@ export default {
 			url: [],
 			previewJson: { education_form: '', institute: '', faculty_name: '', specialty_name: '' },
 			isFP: false,
+			range: [],
 			date: '',
 			time: '',
 		}
@@ -22,6 +23,7 @@ export default {
 			this.myJson = response.data.data
 			this.date = this.myJson.date
 			this.time = this.myJson.time
+			this.range = this.myJson.range
 			if (flag) {
 				this.createUrlArray()
 			}
@@ -36,7 +38,7 @@ export default {
 					}
 				}
 			}
-			this.createPreview(12)
+			this.createPreview(0)
 		},
 		interval() {
 			let counter = 0
@@ -46,15 +48,19 @@ export default {
 					this.getJson()
 				}
 				index = counter % this.url.length
-				// this.createPreview(index)
+				this.createPreview(index)
 				counter += 1
 			}, 1000)
 		},
 		createPreview(index = 0) {
 			const parse = this.myJson[this.url[index].faculty]
-			this.isFP = this.url[index].faculty == 'fp' ? true : false
+			this.isFP = this.url[index].faculty === 'fp'
 			this.previewJson.institute = parse.body.educational_institution.educational_institution_title
-			this.previewJson.education_form = parse.head.education_form
+			if (this.isFP) {
+				this.previewJson.education_form = parse.body.educational_institution.faculties[this.url[index].query.faculty].faculty_name
+			} else {
+				this.previewJson.education_form = parse.head.education_form
+			}
 			this.previewJson.faculty_name = parse.body.educational_institution.faculties[this.url[index].query.faculty].faculty_name
 			this.previewJson.specialty_name = this.createSpecialName(
 				parse.body.educational_institution.faculties[this.url[index].query.faculty].specialties[this.url[index].query.specialty].specialty_name
@@ -81,6 +87,13 @@ export default {
 	computed: {
 		isLoadPage() {
 			return false
+		},
+		lengthCount() {
+			if (this.isFP) {
+				return this.range.length + 5
+			} else {
+				return this.range.length + 6
+			}
 		},
 	},
 }
@@ -111,8 +124,10 @@ export default {
 				>
 			</h4>
 		</div>
-		<div class="myColorRed p-2">
-			<div v-if="!isFP">
+		<div class="p-3 d-flex justify-content-between">
+			<div
+				v-if="!isFP"
+				class="myColorRed">
 				<h2><strong>План приема:</strong></h2>
 				<h2 v-for="(person, key, index) in previewJson.plans">
 					<span>
@@ -121,19 +136,152 @@ export default {
 					</span>
 				</h2>
 			</div>
-			<div v-else>
+			<div
+				v-else
+				class="myColorRed">
 				<h2>
 					<strong>План приема - </strong>
 					<strong v-for="person in previewJson.plans"> {{ person['План приема'] }}</strong>
 				</h2>
 			</div>
+
+			<table
+				class="table table-bordered text-center"
+				style="width: 20%">
+				<thead class="myBgTable">
+					<tr>
+						<td><strong style="font-size: 25px">Дата</strong></td>
+						<td><strong style="font-size: 25px">Время</strong></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr style="vertical-align: middle">
+						<td>
+							<strong style="font-size: 25px">{{ date }}</strong>
+						</td>
+						<td>
+							<strong style="font-size: 40px">{{ time }}</strong>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
+		<table
+			class="table-bordered text-center"
+			:class="[isFP ? 'myStrippedTdFp' : 'myStrippedTd']">
+			<thead>
+				<tr>
+					<td
+						class="p-1"
+						:colspan="lengthCount">
+						<h4>Подано заявлений от абитуриентов</h4>
+					</td>
+				</tr>
+
+				<tr>
+					<td
+						v-if="!isFP"
+						style="width: 5%"
+						rowspan="2"
+						class="vertical-text py-2">
+						<h5>Категория абитуриентов</h5>
+					</td>
+					<td
+						style="width: 3%"
+						rowspan="2"
+						class="vertical-text py-2">
+						<h4>План приема</h4>
+					</td>
+					<td
+						rowspan="2"
+						class="vertical-text py-2">
+						<h4>Подано заявлений</h4>
+					</td>
+					<td
+						class="py-2"
+						colspan="3">
+						<strong>в том числе</strong>
+					</td>
+					<td
+						class="py-2"
+						:colspan="range.length">
+						<h4>с суммой набранных баллов для конкурсного зачисления</h4>
+					</td>
+				</tr>
+				<tr>
+					<td class="vertical-text py-2"><h5>Без экзаменов</h5></td>
+					<td class="vertical-text py-2"><h5>Вне конкурса</h5></td>
+					<td class="tdHead vertical-text py-2"><h5>По конкурсу</h5></td>
+					<td
+						class="p-0 py-5 vertical-text"
+						v-for="point in range"
+						:key="point">
+						<h4>{{ point }}</h4>
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(cat, key, index) in previewJson.plans">
+					<td v-if="!isFP">
+						<strong>{{ key }}</strong>
+					</td>
+					<td
+						style="vertical-align: middle"
+						class="fw-bold py-5">
+						<h4>{{ cat['План приема'] }}</h4>
+					</td>
+					<td style="vertical-align: middle">
+						<h5>{{ cat['Всего'] }}</h5>
+					</td>
+					<td style="vertical-align: middle">
+						<h5>{{ cat['Без экзаменов'] }}</h5>
+					</td>
+					<td style="vertical-align: middle">
+						<h5>{{ cat['Вне конкурса'] }}</h5>
+					</td>
+					<td style="vertical-align: middle">
+						<h5>{{ cat['По конкурсу'] }}</h5>
+					</td>
+					<td
+						style="vertical-align: middle"
+						v-for="point in range">
+						<h4>{{ cat['scores'][point] }}</h4>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
-	<div></div>
 </template>
 
 <style scoped>
 .tdHead {
 	text-transform: uppercase;
+}
+
+.vertical-text {
+	transform: rotate(-180deg);
+	writing-mode: vertical-rl;
+}
+
+.myStrippedTd,
+.myStrippedTdFp {
+	background-color: rgba(162, 205, 186, 0.2);
+}
+
+.myStrippedTd > thead tr:first-child,
+.myStrippedTdFp > thead tr:first-child {
+	background-color: #76923c;
+	color: #f1f1f1;
+}
+
+.myStrippedTd > thead tr:nth-child(2) > td:nth-child(2n + 2),
+.myStrippedTd > thead tr:nth-child(3) > td:nth-child(2n + 1),
+.myStrippedTd > tbody td:nth-child(2n + 2) {
+	background-color: var(--bs-success-border-subtle) !important;
+}
+.myStrippedTdFp > thead tr:nth-child(2) > td:nth-child(2n + 1),
+.myStrippedTdFp > thead tr:nth-child(3) > td:nth-child(2n + 1),
+.myStrippedTdFp > tbody td:nth-child(2n + 1) {
+	background-color: var(--bs-success-border-subtle) !important;
 }
 </style>

@@ -144,8 +144,8 @@ export default {
 					<template v-for="facultiy in myBody.faculties">
 						<tr>
 							<td :colspan="getCountHeadFirst + 3">
-								<h4>
-									<strong class="tdHead">{{ facultiy.faculty_name }}</strong>
+								<h4 class="tdHead">
+									<strong v-if="isFP">Форма получения образования </strong><strong>{{ facultiy.faculty_name }}</strong>
 								</h4>
 							</td>
 						</tr>
